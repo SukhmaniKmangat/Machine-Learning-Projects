@@ -1,0 +1,169 @@
+---
+title: "Group Project"
+output: html_notebook
+---
+```{r}
+gproj <- Cost.of.Living.2022
+head (gproj, 5)
+```
+Rent Index with Breaks at 10:
+
+
+```{r}
+hist(gproj$`Rent.Index`, breaks=10, xlab="Rent Index", main="Rent Index")
+```
+Groceries Index Histogram with breaks at 10:
+
+```{r}
+hist(gproj$`Groceries.Index`, breaks=10, xlab="Groceries Index", main="Groceries Index")
+```
+
+Groceries Index Histogram with breaks at 5:
+
+```{r}
+hist(gproj$`Groceries.Index`, breaks=5, xlab="Groceries Index", main="Groceries Index")
+```
+Restaurant Price Index Histogram with breaks at 10:
+
+```{r}
+hist(gproj$`Restaurant.Price.Index`, breaks=10, xlab="Restaurant Price Index", main="Restaurant Price Index")
+```
+Restaurant Price Index Histogram with breaks at 5:
+
+
+```{r}
+hist(gproj$`Restaurant.Price.Index`, breaks=5, xlab="Restaurant Price Index", main="Restaurant Price Index")
+```
+
+Linear Regression Plot and Correlation of Rent:
+
+```{r}
+plot(gproj$`Rent.Index`, gproj$`Cost.of.Living.Index`, xlab="Rent Index", ylab="Cost of Living Index")
+
+myline <- lm(gproj$`Cost.of.Living.Index` ~ gproj$`Rent.Index`)
+
+points(gproj$`Rent.Index`, myline$coefficients[1] + myline$coefficients[2] *
+         gproj$`Rent.Index`, type="l", col="red")
+
+```
+```{r}
+rentx <- gproj$Rent.Index
+y <- gproj$Cost.of.Living.Index
+cor(rentx,y)
+```
+
+Linear Regression Plot and Correlation of Groceries:
+
+
+```{r}
+plot(gproj$`Groceries.Index`, gproj$`Cost.of.Living.Index`, xlab="Groceries Index", ylab="Cost of Living Index")
+
+myline <- lm(gproj$`Cost.of.Living.Index` ~ gproj$`Groceries.Index`)
+
+points(gproj$`Groceries.Index`, myline$coefficients[1] + myline$coefficients[2] *
+         gproj$`Groceries.Index`, type="l", col="red")
+```
+```{r}
+grocx <- gproj$Groceries.Index
+y <- gproj$Cost.of.Living.Index
+cor(grocx,y)
+```
+Linear Regression Plot and Correlation of Resturant Price:
+
+
+```{r}
+plot(gproj$`Restaurant.Price.Index`, gproj$`Cost.of.Living.Index`, xlab="Restaurant Price Index", ylab="Cost of Living Index")
+
+myline <- lm(gproj$`Cost.of.Living.Index` ~ gproj$`Restaurant.Price.Index`)
+
+points(gproj$`Restaurant.Price.Index`, myline$coefficients[1] + myline$coefficients[2] *
+         gproj$`Restaurant.Price.Index`, type="l", col="red")
+```
+```{r}
+restx <- gproj$Restaurant.Price.Index
+y <- gproj$Cost.of.Living.Index
+cor(restx,y)
+```
+
+
+Summary of data:
+
+```{r}
+summary(gproj)
+```
+View all of the Cost of Living Index values
+
+```{r}
+costindex <- gproj$Cost.of.Living.Index
+costindex
+```
+
+Forming the levels(ranges):
+
+```{r}
+cut(costindex,3)
+```
+
+```{r}
+View(costindex)
+```
+
+
+
+Assigning Low, Medium and High labels to levels
+
+```{r}
+cut(costindex,3, labels = c("Low", "Medium", "High"))
+```
+Dataset with Range Column added:
+
+```{r}
+gproj$Range <- cut(costindex,3, labels = c("Low", "Medium", "High"))
+gproj
+```
+
+```{r}
+View(gproj)
+```
+
+Kmeans Clustering
+
+```{r}
+gprojK <- subset(gproj, select=c(Rent.Index, Groceries.Index, Restaurant.Price.Index))
+```
+
+```{r}
+km <- kmeans(gprojK, centers=3)
+```
+
+```{r}
+gprojM <- data.frame(gproj, km$cluster)
+```
+
+```{r}
+View(gprojM)
+```
+
+Cluster Means for Rent, Groceries and Restaurant Price Only:
+
+```{r}
+km
+```
+```{r}
+library(factoextra)
+library(cluster)
+```
+
+
+Cluster Plot:
+
+```{r}
+fviz_cluster(km, data = gprojK)
+```
+
+Each column Mean of each cluster:
+
+```{r}
+aggregate(gprojM, by=list(cluster=km$cluster), mean)
+```
+
